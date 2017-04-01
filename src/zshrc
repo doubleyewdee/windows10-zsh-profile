@@ -26,7 +26,7 @@ if [[ $? -eq 0 ]] then
 fi
 
 if [[ $using_wsl -eq 1 ]] then
-    source .zsh-windows-tools
+    source ~/.zsh-windows-tools
 
     get_windows_home_dir
 
