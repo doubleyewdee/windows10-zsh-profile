@@ -1,0 +1,45 @@
+# The following lines were added by compinstall
+
+zstyle ':completion:*' completer _complete _ignored _correct _approximate
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|[._-]=** r:|=**' 'l:|=* r:|=*'
+zstyle ':completion:*' max-errors 2
+zstyle :compinstall filename '/home/wd/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+setopt autocd
+unsetopt nomatch
+bindkey -e
+# End of lines configured by zsh-newuser-install
+
+# hackz by doubleyewdee
+# hey so are we like on Windows or whatever?
+using_wsl=0
+grep -s -q Microsoft /proc/version
+if [[ $? -eq 0 ]] then
+    using_wsl=1
+fi
+
+if [[ $using_wsl -eq 1 ]] then
+    source .zsh-windows-tools
+
+    get_windows_home_dir
+
+    set_windows_command_alias mstsc
+    set_windows_command_alias cmd
+    set_windows_command_alias powershell
+    set_windows_command_alias devenv
+fi
+
+if [[ -x /usr/bin/dircolors && -f ~/.dircolors ]] then
+    eval `/usr/bin/dircolors ~/.dircolors`
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi

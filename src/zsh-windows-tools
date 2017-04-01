@@ -1,0 +1,36 @@
+function get_windows_env_var ()
+{
+    print -rn $(cmd.exe /c "echo %$1%" 2>&- | tr -d '\r\n')
+}
+
+function get_windows_home_dir ()
+{
+    winhome=$(get_windows_env_var USERPROFILE | sed --expression 's!\\!/!g' --expression 's!^\(.\)\(.*\)!/mnt/\L\1\E\2!' | tr -d ':\r\n')
+    echo "Windows Home Directory: $winhome"
+}
+
+# look for Windows commands in the path. For GUI commands we use the GUI
+# runner to background them, for console commands we do not.
+function set_windows_command_alias ()
+{
+    for ext in 'exe' 'com' 'bat'; do
+        local cmd=$(whence "$1.$ext")
+        if [[ $cmd ]] then
+            local gui=$(file $cmd | grep GUI)
+            if [[ $gui ]] then
+                alias $1="run_windows_gui_command $cmd"
+            else
+                alias $1="$cmd"
+            fi
+            break
+        fi
+    done
+}
+
+# wrap Windows GUI commands by nuking stderr (they like to complain when run
+# from Linux FS) and backgrounding them. Note that this spews some gack
+# about background commands which is fairly obnoxious but harmless.
+function run_windows_gui_command ()
+{
+    eval $@ 2>&- &
+}
